@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# HackerRank - Linux Shell - Excercise 5 
+# Author: MTO (https://www.mto.nu)
+
 #echo -n "Enter X: "
 read X
 #echo -n "Enter Y: "

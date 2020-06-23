@@ -1,0 +1,56 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.define :control do |control|
+    control.vm.box = "generic/rhel8"
+    control.vm.hostname = "control.rhce.local"
+
+    control.vm.provider :libvirt do |lv|
+      lv.driver = "kvm" 
+      lv.memory = 2048
+      lv.cpus = 2
+      lv.nested = true
+      lv.volume_cache = "none"
+      lv.storage_pool_name = "default"
+      lv.sound_type = "ich6"
+      lv.graphics_type = "spice"
+      lv.video_type = "qxl"
+      lv.channel :type => "unix", :target_name => "org.qemu.guest_agent.0", :target_type => "virtio"
+      lv.channel :type => "spicevmc", :target_name => "com.redhat.spice.0", :target_type => "virtio"
+      lv.default_prefix = ""
+    end
+    
+    control.vm.network :private_network,
+      :libvirt__network_name => "rhce", 
+      :ip => "192.168.200.130",
+      :autostart => true
+  end
+  
+  (1..4).each do |i| 
+    config.vm.define "node#{i}" do |node|
+      node.vm.box = "generic/rhel8"
+      node.vm.hostname = "node#{i}.rhce.local"
+
+      node.vm.provider :libvirt do |lv|
+        lv.driver = "kvm" 
+        lv.memory = 2048
+        lv.cpus = 2
+        lv.nested = true
+        lv.volume_cache = "none"
+        lv.storage_pool_name = "default"
+        lv.sound_type = "ich6"
+        lv.graphics_type = "spice"
+        lv.video_type = "qxl"
+        lv.channel :type => "unix", :target_name => "org.qemu.guest_agent.0", :target_type => "virtio"
+        lv.channel :type => "spicevmc", :target_name => "com.redhat.spice.0", :target_type => "virtio"
+        lv.default_prefix = ""
+      end
+    
+      node.vm.network :private_network,
+       :libvirt__network_name => "rhce",
+       :ip => "192.168.200.13#{i}",
+       :autostart => true
+    end
+  end 
+end 
